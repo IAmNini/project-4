@@ -14,8 +14,8 @@ class WebSocketService {
   }
 
   connect(chatUrl) {
-    const path = `ws://hellocode46.herokuapp.com/ws/chat/${chatUrl}`;
-    this.socketRef = new WebSocket(path);
+    const path = `ws://nini-project-4.herokuapp.com/ws/chat/${chatUrl}`
+    this.socketRef = new WebSocket(path)
     this.socketRef.onopen = () => {
       console.log('WebSocket open')
     }
