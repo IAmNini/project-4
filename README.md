@@ -389,16 +389,25 @@ def validate(self, data):
 ![Chat](image/chat2.png)
 
 # Challenges
+
 One of the challenges we faced was that we used too many unfamiliar technologies. The time required for both research and bug-fixing put a strain on our deadline. 
 
 However, our main challenges arose after deployment. For unknown reasons on Heroku, Django does not close database connections. This means when using the app, the database connection limit will be reached very quickly, and the app will stop working until the database connections are manually closed. 
 
 Moreover, the image upload functionality is compromised, as the frontend file uploads are not stored correctly in our backend. 
 
+# Successes
+
+We learned about 2 completely new technologies and practiced 2 technologies for the first time. It was a lot of work but we were happy to be able to make it work. 
+
+We collaborated very well as a team. We divided tasks but then since there was a lot to debug, we very often all came to the rescue and worked on problems together. 
+
 # Potential Future Features
+
 - Group chat
 - Push notifications
 - Chat invites
 
 # Lessons Learned
+
 Be realistic about the number of new technologies you use in relation to the time limit that you have.
