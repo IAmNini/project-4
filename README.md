@@ -20,21 +20,23 @@
 
 
 # Overview
-This was a week-long group project at General Assembly London by [Fortuny Carrega](https://github.com/IAmNini) , [Alexandra Galitzine](https://github.com/bili-bu), [Ben Harris](https://github.com/benharris8) and [Hanna Truong Thi](https://github.com/hvan307).
+
+This was a week-long group project at General Assembly London by [Fortuny Carrega](https://github.com/IAmNini), [Alexandra Galitzine](https://github.com/bili-bu), [Ben Harris](https://github.com/benharris8) and [Hanna Truong Thi](https://github.com/hvan307).
 
 We wanted to create a chat app with a mobile-first design that allows programmers to connect with each other based on a language, or a framework they're interested to explore and exchange information on.
 
 This is a full-stack application using Python Django (Django REST Framework, Channels) and React.js with Material-UI framework.
 
-
 # Brief
+
 - Build a full-stack application
 - Use a Python Django API (using Django REST Framework to serve your data from a Postgres database)
-- Consume your API with a separate front-end (built with React)
+- Consume the API with a separate front-end (built with React)
 - Be a complete product which most likely means multiple relationships and CRUD functionality for at least a couple of models
 - Implement thoughtful user stories/wireframes
 
 # Technologies Used
+
 - Python
 - Django
 - Django Channels
@@ -55,13 +57,15 @@ This is a full-stack application using Python Django (Django REST Framework, Cha
 # Django Channels (Chat App)
 
 ## Backend
-The websocket request comes into the Django backend and gets directed to the project routing.py.
-From there if it is a websocket it gets directed to the chat app routing.py where the url is checked for the room name and is then directed to the ChatConsumer where the socket requests will be dealt with.
 
-In ChatConsumer there are various helper functions in order to make handling the different requests easier. 
-From the front end websocket requests the backend will always expect a ‘command’ field in the request data. This command is what tells the backend which function to run based on a list of accepted functions called commands. 
+The websocket request comes into the Django backend and gets directed to the project routing.py.
+From there, if it is a websocket, it gets directed to the chat app `routing.py`, where the url is checked for the room name and is then directed to the ChatConsumer, where the socket requests will be dealt with.
+
+In `ChatConsumer` there are various helper functions in order to make handling the different requests easier. 
+From the front end, the backend will always expect a ‘command’ field in the request data. This command is what tells the backend which function to run based on a list of accepted functions called commands. 
 
 This is what a typical request from the front end looks like.
+
 ```js
 {
   'command': 'fetch_messages', 
@@ -69,14 +73,18 @@ This is what a typical request from the front end looks like.
   'chatId': '1'
 }
 ```
+
 The request first comes into the receive function automatically due to the default setup of django channels. Receive just turns the initial data into JSON and passes it to a function decided by reading the command in the request.
 In this case the fetch_messages function will take the chatId and feed it to a helper function written in the chat views.py file (which is imported at the top of consumers).
+
 ```py
 def get_last_10_messages(chatId):
   chat = get_object_or_404(Chat, id=chatId)
   return chat.messages.order_by('-timestamp').all()[:10]
 ```
+
 This function accesses the Messages model of the database and will return all the messages where the chatId matches the chatId passed into the function thereby returning all messages related to that specific chat. The function then bundles them up and turns them unto JSON with helper functions written inside the consumer (messages_to_json and message_to_json), then uses the send_chat_message function to send the messages back to the frontend. 
+
 ```py
 def messages_to_json(self, messages):
   result = []
@@ -102,12 +110,14 @@ def send_chat_message(self, message):
       }
   )
 ```
-Send_chat_message uses an async_to_sync wrapper and runs the group_send function on the channel_layer which comes from redis, the channel layer we are using. Redis is a server running behind the scenes on another port which allows for the different instances of the application to talk to each other. It sends it to the self.room_group_name which is a class variable set when the websocket connect method is run and pertains to the current session’s group name. 
 
-The type: chat_message tells it which function in the consumer to run next and gives it the message/messages to send back to the front end.
-The chat_message function is then called and is what is used to send the data to the connected ports.
+`Send_chat_message` uses an `async_to_sync` wrapper and runs the `group_send()` function on the `channel_layer` which comes from redis, the channel layer we are using. Redis is a server running behind the scenes on another port which allows for the different instances of the application to talk to each other. It sends it to the self.room_group_name which is a class variable set when the websocket connect method is run and pertains to the current session’s group name. 
+
+The type: `chat_message` tells it which function in the consumer to run next and gives it the message/messages to send back to the front end.
+The `chat_message` function is then called and is what is used to send the data to the connected ports.
 
 New_message takes the data from the request in this format:
+
 ```js
 {
   'command': 'new_message', 
